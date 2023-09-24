@@ -1,52 +1,43 @@
-const contacts = require("../models/contacts");
-const { HttpError, ctrlWrapper, contactValidator } = require("../helpers");
+const { HttpError, ctrlWrapper } = require("../helpers");
+const Contact = require("../models/contacts.model");
 
 const getAll = async (req, res) => {
-  const data = await contacts.listContacts();
-  res.status(200).json(data);
+  const data = await Contact.find();
+  return res.status(200).json(data);
 };
 
 const getById = async (req, res, next) => {
   const { id } = req.params;
-  const result = await contacts.getContactById(id);
+  const result = await Contact.findById(id);
 
   if (!result) {
     return next(HttpError(404, "Not found"));
   }
-  res.status(200).json(result);
+  return res.status(200).json(result);
 };
 
 const add = async (req, res, next) => {
-  const { error } = contactValidator(req.body);
-  if (error) {
-    return next(HttpError(400, "Missing required name field"));
-  }
-
-  const result = await contacts.addContact(req.body);
-  res.status(201).json(result);
+  const result = await Contact.create(req.body);
+  return res.status(201).json(result);
 };
 
 const update = async (req, res, next) => {
-  const { error } = contactValidator(req.body);
-  if (error) {
-    return next(HttpError(404, "Invalid data"));
-  }
   const { id } = req.params;
-  const result = await contacts.updateContact(id, req.body);
+  const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
 
   if (!result) {
     return next(HttpError(400, "Missing fields"));
   }
-  res.status(201).json(result);
+  return res.status(201).json(result);
 };
 
 const remove = async (req, res, next) => {
   const { id } = req.params;
-  const result = await contacts.removeContact(id);
+  const result = await Contact.findByIdAndDelete(id);
   if (!result) {
     return next(HttpError(404, "Not found"));
   }
-  res.status(200).json({ message: "contact deleted" });
+  return res.status(200).json({ message: "contact deleted" });
 };
 
 module.exports = {

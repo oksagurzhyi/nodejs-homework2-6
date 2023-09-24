@@ -4,14 +4,12 @@ const router = express.Router();
 
 const ctrl = require("../../controlllers/contactController");
 
+// const mdlw = require("../../middlewares");
+
 router.get("/", ctrl.getAll);
 
-router.get("/:id", ctrl.getById);
+// router.route("/").get(ctrl.getAll).post(mdlw.isContactDataValid, ctrl.add);
 
-router.post("/", ctrl.add);
-
-router.delete("/:id", ctrl.remove);
-
-router.put("/:id", ctrl.update);
+// router.route("/:id").get(ctrl.getById).delete(ctrl.remove).patch(ctrl.update);
 
 module.exports = router;
