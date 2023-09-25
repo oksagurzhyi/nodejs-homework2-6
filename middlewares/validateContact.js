@@ -5,6 +5,7 @@ const isContactDataValid = (req, res, next) => {
   if (error) {
     return next(HttpError(400, "Missing required  field"));
   }
+  next();
 };
 
 module.exports = isContactDataValid;
