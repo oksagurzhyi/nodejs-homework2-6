@@ -10,8 +10,6 @@ const createContact = async (newDataContact, owner) => {
 };
 
 const getContactsList = async (filter, user) => {
-  console.log("filter => ", filter);
-
   const findOptions = filter.favorite
     ? {
         $or: [

@@ -4,7 +4,7 @@ const { createContact, getContactsList } = require("../service/contactService");
 
 const getAll = async (req, res) => {
   const { contactsList, total } = await getContactsList(req.query, req.user);
-  console.log("total", total);
+
   return res.status(200).json({
     message: "Success",
     contactsList,
