@@ -1,10 +1,16 @@
 const { HttpError, ctrlWrapper } = require("../helpers");
 const { Contact } = require("../models/contacts.model");
+const { createContact, getContactsList } = require("../service/contactService");
 
 const getAll = async (req, res) => {
-  const data = await Contact.find();
-  console.log("data", data);
-  return res.json(data);
+  const { contactsList, total } = await getContactsList(req.query, req.user);
+  console.log("total", total);
+  return res.status(200).json({
+    message: "Success",
+    contactsList,
+    total,
+    user: req.user,
+  });
 };
 
 const getById = async (req, res, next) => {
@@ -18,7 +24,8 @@ const getById = async (req, res, next) => {
 };
 
 const add = async (req, res, next) => {
-  const result = await Contact.create(req.body);
+  const result = await createContact(req.body, req.user.id);
+  console.log(req.user);
   return res.status(201).json(result);
 };
 

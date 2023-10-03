@@ -1,7 +1,7 @@
-const isContactDataValid = require("./validateContact");
-const validateBody = require("./validateBody");
+const authMdlw = require("./authMiddlewares");
+const contactsMdlw = require("./contactsMiddlewares");
 
 module.exports = {
-  isContactDataValid,
-  validateBody,
+  authMdlw,
+  contactsMdlw,
 };
