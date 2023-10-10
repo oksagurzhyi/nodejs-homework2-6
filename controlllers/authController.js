@@ -29,10 +29,20 @@ const getCurrentUser = (req, res) => {
   });
 };
 
+const updateAvatar = async (req, res) => {
+  const updatedAvatar = await userService.updateAvatarImage(req.user, req.file);
+
+  res.status(200).json({
+    message: "Success",
+    avatarURL: updatedAvatar.avatarURL,
+  });
+};
+
 module.exports = {
   signup: ctrlWrapper(signup),
   getAllUsers: ctrlWrapper(getAllUsers),
   login: ctrlWrapper(login),
   getCurrentUser: ctrlWrapper(getCurrentUser),
   logout: ctrlWrapper(logout),
+  updateAvatar: ctrlWrapper(updateAvatar),
 };

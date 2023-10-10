@@ -1,3 +1,7 @@
+const multer = require("multer");
+
+const path = require("path");
+
 const {
   HttpError,
   ctrlWrapper,
@@ -44,9 +48,31 @@ const protect = async (req, res, next) => {
   req.user = currentUser;
   next();
 };
+const tempDir = path.join(__dirname, "../", "temp");
+
+const multerConfig = multer.diskStorage({
+  destination: tempDir,
+  filename: (req, file, cbk) => {
+    cbk(null, file.originalname);
+  },
+});
+
+const multerFilter = (req, file, cbk) => {
+  if (file.mimetype.startsWith("image/")) {
+    cbk(null, true);
+  } else {
+    cbk(HttpError(400, "Wrong file type! Only image file!"), false);
+  }
+};
+
+const upload = multer({
+  storage: multerConfig,
+  fileFilter: multerFilter,
+}).single("avatar");
 
 module.exports = {
   checkSignupUserData: ctrlWrapper(checkSignupUserData),
   checkLoginUserData: ctrlWrapper(checkLoginUserData),
   protect: ctrlWrapper(protect),
+  upload,
 };

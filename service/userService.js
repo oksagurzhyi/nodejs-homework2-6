@@ -1,18 +1,30 @@
-// const { HttpError } = require("../helpers");
+const gravatar = require("gravatar");
+const path = require("path");
+const uuid = require("uuid").v4;
+const fs = require("fs/promises");
+
 const { HttpError } = require("../helpers");
 const User = require("../models/users.model");
 const jwtService = require("./jwtService");
+const { resizeImage } = require("./resizeImage");
 
 const signupUser = async (userData) => {
   const newUserData = {
     ...userData,
   };
-  const newUser = await User.create(newUserData);
+  const { email } = newUserData;
+
+  const avatarURL = gravatar.url(email);
+  console.log(avatarURL);
+
+  const newUser = await User.create({ ...newUserData, avatarURL });
+
   newUser.password = undefined;
 
   const token = jwtService.signToken(newUser.id);
-  newUser.token = token;
 
+  newUser.token = token;
+  console.log(newUser);
   return { user: newUser };
 };
 
@@ -28,7 +40,6 @@ const loginUser = async (userData) => {
   if (!user) throw HttpError(401, "Unauthorized");
 
   const passwordIsValid = await user.checkPassword(userData.password);
-  console.log(passwordIsValid);
 
   if (!passwordIsValid) throw HttpError(401, "Unauthorized");
 
@@ -42,7 +53,30 @@ const loginUser = async (userData) => {
   return { user, token };
 };
 
-// const logoutUser = async () => {};
+const updateAvatarImage = async (user, file) => {
+  const avatarName = `${uuid()}-${file.filename}`;
+
+  const destinationDir = path.join(
+    __dirname,
+    "../",
+    "public",
+    "avatars",
+    avatarName
+  );
+
+  await fs.rename(file.path, destinationDir);
+
+  await resizeImage(destinationDir, 250, 250);
+
+  const avatarURL = path.join("avatars", avatarName);
+
+  const updetedAvatar = await User.findByIdAndUpdate(
+    user.id,
+    { avatarURL },
+    { new: true }
+  );
+  return updetedAvatar;
+};
 
 const getUsers = async () => await User.find();
 
@@ -54,5 +88,5 @@ module.exports = {
   checkUserExists,
   loginUser,
   getUserById,
-  //   logoutUser,
+  updateAvatarImage,
 };
