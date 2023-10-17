@@ -1,7 +1,6 @@
 const { Contact } = require("../models/contacts.model");
 
 const createContact = async (newDataContact, owner) => {
-  console.log("newDataContact", newDataContact);
   const newContact = await Contact.create({
     ...newDataContact,
     owner,

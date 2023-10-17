@@ -22,6 +22,23 @@ const logout = async (req, res) => {
   res.json({ message: "logout success" });
 };
 
+const verifyEmail = async (req, res) => {
+  const { verificationToken } = req.params;
+
+  await userService.verificationEmail(verificationToken);
+  res.status(200).json({
+    message: "Verification successful",
+  });
+};
+
+const recheckingEmail = async (req, res) => {
+  const { email } = req.body;
+  await userService.recheckEmail(email);
+  res.status(200).json({
+    message: "Verification email sent",
+  });
+};
+
 const getCurrentUser = (req, res) => {
   res.status(200).json({
     message: "Success",
@@ -40,6 +57,8 @@ const updateAvatar = async (req, res) => {
 
 module.exports = {
   signup: ctrlWrapper(signup),
+  verifyEmail: ctrlWrapper(verifyEmail),
+  recheckingEmail: ctrlWrapper(recheckingEmail),
   getAllUsers: ctrlWrapper(getAllUsers),
   login: ctrlWrapper(login),
   getCurrentUser: ctrlWrapper(getCurrentUser),

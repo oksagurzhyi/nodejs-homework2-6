@@ -7,6 +7,8 @@ router.post("/signup", authMdlw.checkSignupUserData, authCtrl.signup);
 router.post("/login", authMdlw.checkLoginUserData, authCtrl.login);
 router.get("/current", authMdlw.protect, authCtrl.getCurrentUser);
 router.post("/logout", authMdlw.protect, authCtrl.logout);
+router.get("/verify", authMdlw.checkEmail, authCtrl.recheckingEmail);
+router.get("/verify/:verificationToken", authCtrl.verifyEmail);
 router.patch(
   "/avatar",
   authMdlw.protect,

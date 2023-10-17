@@ -1,5 +1,4 @@
 const multer = require("multer");
-
 const path = require("path");
 
 const {
@@ -7,13 +6,13 @@ const {
   ctrlWrapper,
   signUpUserDataValidator,
   loginUserDataValidator,
+  emailValidator,
 } = require("../helpers");
 const { checkUserExists, getUserById } = require("../service/userService");
 const { checkToken } = require("../service/jwtService");
 
 const checkSignupUserData = async (req, res, next) => {
   const { error, value } = signUpUserDataValidator(req.body);
-  console.log(error, value);
 
   if (error) {
     next(HttpError(400, error.message));
@@ -24,6 +23,15 @@ const checkSignupUserData = async (req, res, next) => {
     res.status(409).json({ message: "Email already in use" });
   }
 
+  next();
+};
+
+const checkEmail = async (req, res, next) => {
+  const { error, value } = emailValidator(req.body);
+  console.log(error, value);
+  if (error) {
+    next(HttpError(400, "Missing required field email"));
+  }
   next();
 };
 
@@ -72,6 +80,7 @@ const upload = multer({
 
 module.exports = {
   checkSignupUserData: ctrlWrapper(checkSignupUserData),
+  checkEmail: ctrlWrapper(checkEmail),
   checkLoginUserData: ctrlWrapper(checkLoginUserData),
   protect: ctrlWrapper(protect),
   upload,
